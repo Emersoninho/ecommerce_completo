@@ -19,7 +19,7 @@ class ContactForm(forms.Form):
             }
         )
     )
-    content = forms.CharField(
+    mensagem = forms.CharField(
         error_messages={'required': 'É obrigatório o preenchimento do campo mensagem'},
         widget=forms.Textarea(
             attrs={
