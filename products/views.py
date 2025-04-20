@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DeleteView
 from .models import Product
+from django.http import Http404
 
 # class Based View
 class ProductListView(ListView):
@@ -35,8 +36,13 @@ class ProductDetailView(DeleteView):
 #Funcion Based View
 def product_detail_view(request, pk=None, *args, **kwargs):
     #instance = Product.objects.get(pk=pk) #get the object id
-    instance = get_object_or_404(Product, pk=pk)
-    queryset = Product.objects.all()
+    #instance = get_object_or_404(Product, pk=pk)
+    qs = Product.objects.filter(id=pk)
+    if qs.count() == 1:
+        instance = qs.first()
+    else:
+        raise Http404("Esse produto não existe!")
+
     context = {
         'object': instance
     }
