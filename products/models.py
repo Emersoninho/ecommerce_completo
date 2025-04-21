@@ -36,6 +36,10 @@ class Product(models.Model):
     active = models.BooleanField(default=True)
 
     objects = ProductMenager()
+
+    def get_absolute_url(self):
+        return f"/products/{self.slug}/"
+
     
     def __str__(self):
         return self.title
