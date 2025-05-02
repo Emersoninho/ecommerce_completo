@@ -2,6 +2,7 @@ from django.db import models
 from .utils import unique_slug_generator
 from django.db.models.signals import pre_save
 from django.urls import reverse
+from django.db.models import Q
 
 # custom queryset
 class ProductQuerySet(models.query.QuerySet):
@@ -10,6 +11,12 @@ class ProductQuerySet(models.query.QuerySet):
 
     def featured(self):
         return self.filter(featured=True, active=True)
+    
+    def search(self, query):
+        lookups = (Q(title__contains = query) | 
+                   Q(description__contains = query) | 
+                   Q(price__contains = query))
+        return self.filter(lookups).distinct()
 
 class ProductMenager(models.Manager):
     def get_queryset(self):
@@ -26,6 +33,9 @@ class ProductMenager(models.Manager):
         if qs.count() == 1:
             return qs.first()
         return None
+    
+    def search(self, query):
+        return self.get_queryset().active().search(query)
 
 class Product(models.Model):
     title = models.CharField(max_length=120)
