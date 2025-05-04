@@ -4,11 +4,13 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import home_page, about_page, contact_page, login_page, logout_page, register_page
 from django.views.generic import TemplateView
+from carts.views import cart_home
 
 urlpatterns = [
     path('', home_page, name='home'),
     path('about/', about_page, name='about'),
     path('contact/', contact_page, name='contatc'),
+    path('cart/', cart_home, name='cart'),
     path('login/', login_page, name='login'),
     path('logout/', logout_page, name='logout'),
     path('register/', register_page, name='register'),
