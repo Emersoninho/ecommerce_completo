@@ -29,8 +29,13 @@
           <a class="nav-link" href="{{ products_list_url }}">Produtos</a>
         </li>
         {% if request.user.is_authenticated %}
-        <li class="nav-item {% if request.path == login_url %} active {% endif %}"> 
-          <a class="nav-link" href="{{ logout_url }}">Logout</a> 
+        <li class="nav-item">
+          <form method="POST" action="{{ logout_url }}">
+            {% csrf_token %}
+            <a href="#" class="nav-link" onclick="this.closest('form').submit(); return false;">
+              Logout
+            </a>
+          </form>
         </li>
         {% else %}
         <li class="nav-item {% if request.path == login_url %} active {% endif %}">

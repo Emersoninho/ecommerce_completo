@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import BillingFrofile
+from .models import BillingProfile
 
-admin.site.register(BillingFrofile)
+admin.site.register(BillingProfile)

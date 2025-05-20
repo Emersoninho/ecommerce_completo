@@ -6,7 +6,7 @@ User = settings.AUTH_USER_MODEL
 # fulano@mail.com -> pode ter 1.000.000.000 billing profiles
 # user fulano@mail.com -> pode ter apenas 1 billing profile
 
-class BillingFrofile(models.Model):
+class BillingProfile(models.Model):
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
     email = models.EmailField()
     active = models.BooleanField(default=True)
@@ -19,6 +19,6 @@ class BillingFrofile(models.Model):
     
 def user_created_receiver(sender, instance, created, *args, **kwargs):
     if created and instance.email:
-        BillingFrofile.objects.get_or_create(user=instance, email=instance.email)
+        BillingProfile.objects.get_or_create(user=instance, email=instance.email)
 
 post_save.connect(user_created_receiver, sender=User)        

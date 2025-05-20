@@ -15,7 +15,7 @@ urlpatterns = [
     path('cart/', include('carts.urls', namespace='cart')),
     path('cart/', cart_home, name='cart'),
     path('login/', login_page, name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('register/', register_page, name='register'),
     path('bootstrap/', TemplateView.as_view(template_name='bootstrap/example.html')),
     path('products/', include('products.urls', namespace='products')),
