@@ -5,7 +5,7 @@ from django.urls import path, include
 from .views import home_page, about_page, contact_page
 from django.views.generic import TemplateView
 from carts.views import cart_home
-from accounts.views import login_page, register_page, logout_page
+from accounts.views import login_page, register_page, logout_page, guest_register_view
 from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
     path('cart/', include('carts.urls', namespace='cart')),
     path('cart/', cart_home, name='cart'),
     path('login/', login_page, name='login'),
+    path('register/guest/', guest_register_view, name='guest_register'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('register/', register_page, name='register'),
     path('bootstrap/', TemplateView.as_view(template_name='bootstrap/example.html')),
