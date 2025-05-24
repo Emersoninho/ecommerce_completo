@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from carts.views import cart_home
 from accounts.views import login_page, register_page, logout_page, guest_register_view
 from django.contrib.auth.views import LogoutView
+from addresses.views import checkout_address_create_view
 
 urlpatterns = [
     path('', home_page, name='home'),
@@ -14,6 +15,7 @@ urlpatterns = [
     path('contact/', contact_page, name='contatc'),
     path('cart/', include('carts.urls', namespace='cart')),
     path('cart/', cart_home, name='cart'),
+    path('checkout/address/create/', checkout_address_create_view, name='checkout_address_create'),
     path('login/', login_page, name='login'),
     path('register/guest/', guest_register_view, name='guest_register'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),

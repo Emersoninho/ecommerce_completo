@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'orders',
     'accounts',
     'billing',
+    'addresses',
 ]
 
 LOGOUT_REDIRECT_URL = '/login/'

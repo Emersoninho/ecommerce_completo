@@ -28,7 +28,7 @@ class OrderManager(models.Manager):
         return obj, created
 
 class Order(models.Model):
-    billing_profile = models.ForeignKey(BillingProfile, on_delete=models.CASCADE, null = True, blank = True)
+    billing_profile = models.ForeignKey(BillingProfile, on_delete=models.CASCADE, related_name='addresses_from_orders_app', null = True, blank = True)
     order_id = models.CharField(max_length = 120, blank = True)
     # billing_profile = ?
     # shipping_address = ?
