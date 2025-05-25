@@ -1,6 +1,7 @@
 import math
 from django.db import models
 from django.db.models.signals import pre_save, post_save
+from addresses.models import Address
 from billing.models import BillingProfile
 from carts.models import Cart
 from ecommerce.utils import unique_order_id_generator
@@ -22,17 +23,17 @@ class OrderManager(models.Manager):
             obj = qs.first()
         else:
             obj = self.model.objects.create(
-                    billing_profile = billing_profile, 
+                    billing_profile = billing_profile,
                     cart=cart_obj)
             created = True
         return obj, created
 
 class Order(models.Model):
-    billing_profile = models.ForeignKey(BillingProfile, on_delete=models.CASCADE, related_name='addresses_from_orders_app', null = True, blank = True)
+    billing_profile = models.ForeignKey(BillingProfile, on_delete=models.CASCADE, null = True, blank = True)
     order_id = models.CharField(max_length = 120, blank = True)
     # billing_profile = ?
-    # shipping_address = ?
-    # billing_address
+    shipping_address = models.ForeignKey(Address, related_name="shipping_address", on_delete=models.CASCADE, null=True, blank=True)
+    billing_address = models.ForeignKey(Address, related_name="billing_address", on_delete=models.CASCADE, null=True, blank=True)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null = True)
     status = models.CharField(max_length = 120, default = 'created', choices = ORDER_STATUS_CHOICES )
     shipping_total = models.DecimalField(default = 5.99, max_digits = 100, decimal_places = 2)
@@ -56,47 +57,13 @@ class Order(models.Model):
 def pre_save_create_order_id(sender, instance, *args, **kwargs):
     if not instance.order_id:
         instance.order_id = unique_order_id_generator(instance)
-    # retorna todos os orders com esta instância de cart, 
-    # excluindo aqueles que têm a mesma instância de billing_profile
+    # return all orders with this Cart instance, excluding those  
+    # that have the same billing profile instance
     qs = Order.objects.filter(cart = instance.cart).exclude(billing_profile = instance.billing_profile)
+    print("QuerySet: ", qs)
     if qs.exists():
         qs.update = False
-class Order(models.Model):
-    billing_profile = models.ForeignKey(BillingProfile, on_delete=models.CASCADE, null=True, blank=True)
-    order_id = models.CharField(max_length=120, blank=True)
-    shipping_address = models.ForeignKey('Address', on_delete=models.CASCADE, null=True, blank=True, related_name='shipping_address')
-    billing_address = models.ForeignKey('Address', on_delete=models.CASCADE, null=True, blank=True, related_name='billing_address')
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True)
-    status = models.CharField(max_length=120, default='created', choices=ORDER_STATUS_CHOICES)
-    shipping_total = models.DecimalField(default=5.99, max_digits=100, decimal_places=2)
-    total = models.DecimalField(default=0.00, max_digits=100, decimal_places=2)
-    active = models.BooleanField(default=True)
 
-    def __str__(self):
-        return self.order_id
-
-    objects = OrderManager()
-
-    def update_total(self):
-        cart_total = self.cart.total
-        shipping_total = self.shipping_total
-        new_total = math.fsum([cart_total, shipping_total])
-        formatted_total = format(new_total, '.2f')
-        self.total = formatted_total
-        self.save()
-        return new_total
-
-class Address(models.Model):
-    billing_profile = models.ForeignKey(BillingProfile, on_delete=models.CASCADE, null=True, blank=True)
-    address_line_1 = models.CharField(max_length=120)
-    address_line_2 = models.CharField(max_length=120, null=True, blank=True)
-    city = models.CharField(max_length=120)
-    state = models.CharField(max_length=120)
-    country = models.CharField(max_length=120)
-    postal_code = models.CharField(max_length=120)
-
-    def __str__(self):
-        return f"{self.address_line_1}, {self.city}, {self.state}, {self.country}, {self.postal_code}"
 pre_save.connect(pre_save_create_order_id, sender = Order)
 
 def post_save_cart_total(sender, instance, created, *args, **kwargs):
