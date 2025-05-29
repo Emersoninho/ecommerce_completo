@@ -12,6 +12,9 @@ from orders.models import Order
 from products.models import Product
 from .models import Cart
 
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
 def cart_home(request):
     cart_obj, new_obj = Cart.objects.new_or_get(request)
     return render(request, "carts/home.html", {"cart": cart_obj})
@@ -33,11 +36,12 @@ def cart_update(request):
             added = True
         request.session['cart_items'] = cart_obj.products.count()
         # return redirect(product_obj.get_absolute_url())
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            print('ajax request')
+        if is_ajax(request):
+            print("Ajax request")
             json_data = {
-                'added': added,
-                'removed': not added,
+                "added": added,
+                "removed": not added,
+                "cartItemCount": cart_obj.products.count()
             }
             return JsonResponse(json_data)
     return redirect("cart:home")
@@ -78,6 +82,7 @@ def checkout_home(request):
             request.session['cart_items'] = 0
             del request.session['cart_id']
             return redirect("cart:success")
+    
     context = {
         "object": order_obj,
         "billing_profile": billing_profile,
@@ -89,4 +94,4 @@ def checkout_home(request):
     return render(request, "carts/checkout.html", context)
 
 def checkout_done_view(request):
-    return render(request, 'carts/checkout-done.html', {})
+    return render(request, "carts/checkout-done.html", {})

@@ -1,36 +1,21 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Base Teplte</title>
-        {% include "base/css.html" %}
-        {% block base_head %}{% endblock base_head %}
-    </head>
-    <body>
-  {% include "base/navbar.html" with nome_da_marca="Loja virtual"%}
-
-  <div class="container mt-3">
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-      {% endfor %}
-    {% endif %}
-  </div>
-
-  <div class="container">
-    {% block content %} {% endblock content %}
-  </div>
-
-  {% include "base/js.html" %}
-     <script>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Base Template</title>
+    {% include 'base/css.html' %}
+    {% block base_head %}{% endblock base_head %}
+  </head>
+  <body>
+    {% include 'base/navbar.html' with nome_da_marca='Loja virtual' %}
+    <div class='container'>
+      {% block content %} {% endblock %}
+    </div>
+    {% include 'base/js.html' %}
+    <script>
       $(document).ready(function(){
         const productForm = $(".form-product-ajax")
         productForm.submit(function(event){
@@ -48,14 +33,16 @@
             success: function(data){
               console.log("Sucesso")
               console.log(data)
-              console.log('Adicionado', data.added)
-              console.log('Removido', data.removed)
-              const submitSpan = thisForm.find('.submit-span')
+              console.log("Adicionado", data.added)
+              console.log("Adicionado", data.removed)
+              const submitSpan = thisForm.find(".submit-span")
               if(data.added){
                   submitSpan.html("No carrinho <button type='submit' class='btn btn-link'>Excluir</button>")
               } else{
                   submitSpan.html("<button type='submit' class='btn btn-success'>Adicionar</button>")
               }
+                  const navbarCount = $(".navbar-cart-count")
+                  navbarCount.text(data.cartItemCount)
             },
             error: function(errorData){
               console.log("Erro")
