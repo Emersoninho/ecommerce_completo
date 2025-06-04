@@ -27,10 +27,10 @@
             const searchInput = searchForm.find("[name='q']")
             const typingTimer = 0;
             const typingInterval = 500 // .5 segundos 
-            const search-Btn = searchForm.find("[type='submit']")
+            const searchBtn = searchForm.find("[type='submit']")
             searchInput.keyup(function(event){
               clearTimeout(typingTimer)
-              const typingTimer = setTimeout(peformSearch, typingInterval)
+              const typingTimer = setTimeout(performSearch, typingInterval)
             })
 
             function displaySearching(){
@@ -80,7 +80,12 @@
                     }
                   },
                   error: function(errorData){
-                    console.log("Erro")
+                    $.alert({
+                      title: 'Oops!',
+                      content: 'Ocorreu um erro, tente novamente mais tarde!',
+                      theme: 'modern',
+                  })
+                    console.log('erro')
                     console.log(errorData)
                   }
                 })
@@ -123,6 +128,11 @@
                     }
                   },
                   error: function(errorData){
+                    $.alert({
+                      title: 'Oops!',
+                      content: 'Ocorreu um erro, tente novamente mais tarde!',
+                      theme: 'modern',
+                    })
                     console.log("Erro")
                     console.log(errorData)
                   }
