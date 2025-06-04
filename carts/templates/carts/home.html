@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <h1>Carrinho</h1>
+  <h1>Cart</h1>
+
   {% if cart.products.exists %}
-    <table class="table">
+    <table class="table cart-table">
       <thead>
         <tr>
           <th>#</th>
@@ -10,32 +12,40 @@
           <th>Preço</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="cart-body">
         {% for product in cart.products.all %}
-        <tr>
-          <th scope="row">{{ forloop.counter }}</th>
-          <td>
-            <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
-            {% include 'products/snippets/update-cart.html' with product=product cart=cart in_cart=True %}
-          </td>
-          <td>R$ {{ product.price }}</td>
-        </tr>
+          <tr class="cart-product">
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>
+              <a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+              {% include 'carts/snippets/remove-product.html' with product_id=product.id %}
+            </td>
+            <td>R$ {{ product.price }}</td>
+          </tr>
         {% endfor %}
         <tr>
-          <td colspan="2" class="text-right"><b>Subtotal:</b></td>
-          <td>R$ {{ cart.subtotal }}</td>
-        </tr>
-        <tr>
-          <td colspan="2" class="text-right"><b>Total:</b></td>
-          <td>R$ {{ cart.total }}</td>
+          <td colspan="2"></td>
+          <td><b>Subtotal</b> R$ <span class="cart-subtotal">{{ cart.subtotal }}</span></td>
         </tr>
         <tr>
           <td colspan="2"></td>
-          <td><a class="btn btn-lg btn-success" href="{% url 'cart:checkout' %}">Conferir compra</a></td>
+          <td><b>Total</b> R$ <span class="cart-total">{{ cart.total }}</span></td>
+        </tr>
+        <tr>
+          <td colspan="2"></td>
+          <td>
+            <a class="btn btn-lg btn-success" href="{% url 'cart:checkout' %}">Conferir compra</a>
+          </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Formulário oculto para remover item (usado pelo JavaScript) -->
+    <div class="cart-item-remove-form" style="display: none;">
+      {% include 'carts/snippets/remove-product.html' %}
+    </div>
+
   {% else %}
-    <p class='lead'>Carrinho vazio</p>
+    <p class="lead">Carrinho vazio</p>
   {% endif %}
 {% endblock %}
